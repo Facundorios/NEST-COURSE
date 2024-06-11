@@ -1,4 +1,4 @@
-import { Move } from "../interface/pokeapi-response.interface";
+import { Move, PokeapiResponse } from "../interface/pokeapi-response.interface";
 import { PokeApiAdapter } from "../api/pokeApi.adapter";
 
 export class Pokemon {
@@ -25,8 +25,8 @@ export class Pokemon {
     //   "https://pokeapi.co/api/v2/pokemon/4"
     // );
 
-    const data = await this.http.get("https://pokeapi.co/api/v2/pokemon/4");
-    console.log(data.moves);
+    const data = await this.http.get<PokeapiResponse>("https://pokeapi.co/api/v2/pokemon/4");
+    console.log(data.moves[0].move.name);
 
     return data.moves;
   }
