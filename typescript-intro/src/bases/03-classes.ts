@@ -1,5 +1,5 @@
 import axios from "axios";
-import { Move, PokeapiReponse } from "../interface/pokeapi-response.interface";
+import { Move, PokeapiResponse } from "../interface/pokeapi-response.interface";
 //Diferencia entre clase e interfaz en TypeScript: una clase es una plantilla para crear objetos, mientras que una interfaz es una especie de contrato que define las propiedades y métodos que un objeto debe tener.
 
 //En este caso, hacemos una clase Pokemon, que tiene un id y un nombre. Luego, creamos una instancia de la clase Pokemon llamada pikachu.
@@ -33,10 +33,10 @@ export class Pokemon {
     console.log(`Hola, soy ${this.name}`);
   }
   //Se define un método getMoves, que hace una petición a la API de Pokeapi para obtener los movimientos del Pokémon. El método es asíncrono, ya que la petición a la API puede tardar un tiempo en completarse. Se utiliza la palabra reservada async para indicar que el método es asíncrono, y se utiliza la función axios.get para hacer la petición a la API. La URL de la API se pasa como argumento a la función axios.get, y se espera a que la petición se complete con la palabra reservada await. La respuesta de la API se almacena en la variable data, y se devuelve la propiedad data.moves, que contiene los movimientos del Pokémon.
-  //En e3ste apartado, hay tipado de promise, se espera que la respuesta sea de tipo Move[], que es un array de objetos que cumplen con la interfaz Move.  
+  //En e3ste apartado, hay tipado de promise, se espera que la respuesta sea de tipo Move[], que es un array de objetos que cumplen con la interfaz Move.
   async getMoves(): Promise<Move[]> {
     //const moves = 10
-    const { data } = await axios.get<PokeapiReponse>(
+    const { data } = await axios.get<PokeapiResponse>(
       "https://pokeapi.co/api/v2/pokemon/25"
     );
     console.log(data.moves);
