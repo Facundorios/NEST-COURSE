@@ -8,16 +8,15 @@ class NewPokemon {
   speak() {
     console.log(`soy un puto rebelde`);
   }
-
 }
 
 const MyDecorator = () => {
   return (target: Function) => {
-  return NewPokemon
+    return NewPokemon;
   };
 };
 
-@MyDecorator()  
+@MyDecorator()
 export class Pokemon {
   constructor(public readonly id: number, public name: string) {}
 
