@@ -12,7 +12,12 @@ import {
   ValidationPipe,
 } from '@nestjs/common';
 import { CarsService } from './cars.service';
-import { CreateCarDto } from './dto/create-car.dto';
+
+//Importacion mediante un "index.ts": si creo un archivo index.ts en la carpta dto, puedo importar todos los archivos de la carpeta con una sola linea de codigo, en este caso se importan los archivos CreateCarDto y UpdateCarDto, que estan dentro de la carpeta dto, y se exportan en el archivo index.ts.
+import { CreateCarDto, UpdateCarDto } from './dto';
+
+
+import { urlToHttpOptions } from 'url';
 
 //Se utiliza el decorador controller y se le pasa como argumento 'cars', esto quiere decir que todas las rutas que se definan en este controlador van a tener como prefijo /cars
 @Controller('cars')
@@ -47,12 +52,16 @@ export class CarsController {
   createCar(@Body() createCarDTO: CreateCarDto) {
     // console.log('New car created:');
     // console.log(createCarDTO);
-    return this.carsService.createCar(createCarDTO)
+    return this.carsService.createCar(createCarDTO);
   }
 
   @Patch('/:id')
-  updateCar(@Param('id', ParseIntPipe) id: number, @Body() body: any) {
-    return body;
+  updateCar(
+    @Param('id', ParseUUIDPipe) id: string,
+    @Body() updateCarDto: UpdateCarDto,
+  ) {
+    
+    return updateCarDto;
   }
 
   @Delete('/:id')

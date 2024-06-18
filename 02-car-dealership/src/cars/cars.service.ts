@@ -1,7 +1,7 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { Car } from './interface/car.interface';
 import { v4 as uudi } from 'uuid';
-import { CreateCarDto } from './dto/create-car.dto';
+import { CreateCarDto, UpdateCarDto } from './dto';
 
 //Dentro de los archivos services denest estan dentro la logica de "negocio", que despues la debemos de "inyectar" en otros lugares del código.
 //
@@ -42,6 +42,8 @@ export class CarsService {
     return car;
   }
 
+  //Se crea un metodo que recibe un objeto de tipo CreateCarDto, este metodo se va a encargar de crear un auto, se utiliza el decorador Post, y se le pasa como argumento la ruta /, esto quiere decir que se va a recibir una peticion POST en la ruta /, en el createCar se utiliza el decorador Body, y se le pasa como argumento 'createCarDto', esto quiere decir que se va a recibir un objeto de tipo CreateCarDto.
+  //En el metodo createCar se crea un nuevo auto, se le asigna un id con el metodo uudi, y se le asignan las propiedades del objeto createCarDto, luego se agrega el auto al arreglo de autos, y se retorna el auto creado
   createCar(createCarDto: CreateCarDto) {
     const newCar = {
       id: uudi(),
@@ -49,5 +51,9 @@ export class CarsService {
     };
     this.cars.push(newCar);
     return newCar
+  }
+  //Se crea un metodo que recibe un id y un objeto de tipo UpdateCarDto, este metodo se va a encargar de actualizar un auto, se utiliza el decorador Patch, y se le pasa como argumento la ruta /:id, esto quiere decir que se va a recibir un parametro en la ruta, en el updateCar se utiliza el decorador params, y se le pasa como argumento 'id', esto quiere decir que se va a recibir un parametro llamado id, tambien se utiliza el decorador Body, y se le pasa como argumento 'updateCarDto', esto quiere decir que se va a recibir un objeto de tipo UpdateCarDto
+  update (id: string, updateCarDto: UpdateCarDto) {
+    
   }
 }
