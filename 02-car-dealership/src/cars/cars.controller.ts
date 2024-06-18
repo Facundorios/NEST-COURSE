@@ -12,7 +12,7 @@ import {
   ValidationPipe,
 } from '@nestjs/common';
 import { CarsService } from './cars.service';
-import { CreateCarDTO } from './dto/create-car.dto';
+import { CreateCarDto } from './dto/create-car.dto';
 
 //Se utiliza el decorador controller y se le pasa como argumento 'cars', esto quiere decir que todas las rutas que se definan en este controlador van a tener como prefijo /cars
 @Controller('cars')
@@ -44,8 +44,10 @@ export class CarsController {
   }
 
   @Post()
-  createCar(@Body() createCarDTO: CreateCarDTO) {
-    return createCarDTO;
+  createCar(@Body() createCarDTO: CreateCarDto) {
+    // console.log('New car created:');
+    // console.log(createCarDTO);
+    return this.carsService.createCar(createCarDTO)
   }
 
   @Patch('/:id')

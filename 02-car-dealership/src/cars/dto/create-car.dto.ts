@@ -1,6 +1,6 @@
 import { IsString, MinLength } from "class-validator"
 
-export class CreateCarDTO {
+export class CreateCarDto {
     
     @IsString()
     @MinLength(3)
