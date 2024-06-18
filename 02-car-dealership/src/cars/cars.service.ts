@@ -1,4 +1,4 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
 import { Car } from './interface/car.interface';
 import { v4 as uudi } from 'uuid';
 import { CreateCarDto, UpdateCarDto } from './dto';
@@ -50,10 +50,28 @@ export class CarsService {
       ...createCarDto,
     };
     this.cars.push(newCar);
-    return newCar
+    return newCar;
   }
   //Se crea un metodo que recibe un id y un objeto de tipo UpdateCarDto, este metodo se va a encargar de actualizar un auto, se utiliza el decorador Patch, y se le pasa como argumento la ruta /:id, esto quiere decir que se va a recibir un parametro en la ruta, en el updateCar se utiliza el decorador params, y se le pasa como argumento 'id', esto quiere decir que se va a recibir un parametro llamado id, tambien se utiliza el decorador Body, y se le pasa como argumento 'updateCarDto', esto quiere decir que se va a recibir un objeto de tipo UpdateCarDto
-  update (id: string, updateCarDto: UpdateCarDto) {
-    
+  //En el metodo updateCar se busca el auto por su id, se utiliza el metodo find, que recibe una funcion como argumento, esta funcion recibe un auto y retorna true si el id del auto es igual al id que se recibe como argumento, luego se recorre el arreglo de autos, y se actualiza el auto que se encontro, se retorna el auto actualizado
+  update(id: string, updateCarDto: UpdateCarDto) {
+    let carSelect = this.findOneById(id);
+
+    if (updateCarDto.id && updateCarDto.id !== id) {
+      throw new BadRequestException("El id que seleccionaste no es valido,burro.")
+    }
+
+    this.cars = this.cars.map((car) => {
+      if (car.id == id) {
+        carSelect = {
+          ...carSelect,
+          ...updateCarDto,
+          id,
+        };
+        return carSelect;
+      }
+      return car;
+    });
+    return carSelect;
   }
 }
