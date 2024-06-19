@@ -3,6 +3,7 @@ import {
   Controller,
   Delete,
   Get,
+  NotFoundException,
   Param,
   ParseIntPipe,
   ParseUUIDPipe,
@@ -15,9 +16,6 @@ import { CarsService } from './cars.service';
 
 //Importacion mediante un "index.ts": si creo un archivo index.ts en la carpta dto, puedo importar todos los archivos de la carpeta con una sola linea de codigo, en este caso se importan los archivos CreateCarDto y UpdateCarDto, que estan dentro de la carpeta dto, y se exportan en el archivo index.ts.
 import { CreateCarDto, UpdateCarDto } from './dto';
-
-
-import { urlToHttpOptions } from 'url';
 
 //Se utiliza el decorador controller y se le pasa como argumento 'cars', esto quiere decir que todas las rutas que se definan en este controlador van a tener como prefijo /cars
 @Controller('cars')
@@ -60,12 +58,11 @@ export class CarsController {
     @Param('id', ParseUUIDPipe) id: string,
     @Body() updateCarDto: UpdateCarDto,
   ) {
-    
-    return this.carsService.update(id, updateCarDto);
+    return this.carsService.updateCar(id, updateCarDto);
   }
 
   @Delete('/:id')
-  deleteCar(@Param('id', ParseIntPipe) id: number) {
-    return `Car with id ${id} has been deleted`;
+  deleteCar(@Param('id', ParseUUIDPipe) id: string) {
+    return this.carsService.deleteCar( id )
   }
 }
