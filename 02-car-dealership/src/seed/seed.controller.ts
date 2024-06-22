@@ -1,14 +1,14 @@
 import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
-import { SeedsService } from './seeds.service';
+import { SeedsService } from './seed.service';
 
-@Controller('seeds')
+@Controller('seed')
 export class SeedsController {
   constructor(private readonly seedsService: SeedsService) {}
 
 
   @Get()
   runSeed() {
-    return this.seedsService.populareDatabase();
+    return this.seedsService.populateDatabase();
   }
 
 

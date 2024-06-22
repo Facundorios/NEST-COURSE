@@ -12,23 +12,7 @@ import { CreateCarDto, UpdateCarDto } from './dto';
 @Injectable()
 export class CarsService {
   //Se crea un arreglo de autos
-  private cars: Car[] = [
-    {
-      id: uudi(),
-      brand: 'Toyota',
-      model: 'Corolla',
-    },
-    {
-      id: uudi(),
-      brand: 'Ford',
-      model: 'Fiesta',
-    },
-    {
-      id: uudi(),
-      brand: 'Chevrolet',
-      model: 'Onix',
-    },
-  ];
+  private cars: Car[] = [];
 
   findAll() {
     return this.cars;
@@ -82,10 +66,12 @@ export class CarsService {
   }
 
   deleteCar(id: string) {
+    const car = this.findOneById(id);
 
-    const car = this.findOneById(id)
+    this.cars = this.cars.filter((car) => car.id !== id); //Se filtran los autos, se retorna true si el id del auto es diferente al id que se recibe como argumento
+  }
 
-    this.cars = this.cars.filter(car => car.id !== id); //Se filtran los autos, se retorna true si el id del auto es diferente al id que se recibe como argumento
-
+  fillCarsWithSeedData(cars: Car[]) {
+    this.cars = cars;
   }
 }
