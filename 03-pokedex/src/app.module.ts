@@ -7,7 +7,7 @@ import { MongooseModule } from '@nestjs/mongoose';
 import { PokemonModule } from './pokemon/pokemon.module';
 
 @Module({
-  imports: [ 
+  imports: [  
     ServeStaticModule.forRoot({
       rootPath: join(__dirname, '..', 'public')
     }),
