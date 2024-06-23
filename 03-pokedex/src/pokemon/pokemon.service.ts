@@ -17,6 +17,21 @@ export class PokemonService {
     private readonly pokemonModel: Model<Pokemon>,
   ) {}
 
+  //Manejo de errores mendiante un private handleErrors
+
+  private handleExeceptions(error: any) {
+    if (error.code === 11000) {
+      throw new BadRequestException(
+        `The Pokemon already exist in the Database: ${JSON.stringify(error.keyValue)}`,
+      );
+    }
+
+    console.log(error);
+    throw new InternalServerErrorException(
+      'Error at the moment to create the Pokemon, for more information, see on the logs',
+    );
+  }
+
   async create(createPokemonDto: CreatePokemonDto) {
     createPokemonDto.name = createPokemonDto.name.toLowerCase();
 
@@ -24,16 +39,7 @@ export class PokemonService {
       const pokemon = await this.pokemonModel.create(createPokemonDto);
       return pokemon;
     } catch (error) {
-      if (error.code === 11000) {
-        throw new BadRequestException(
-          `The Pokemon already exist in the Database: ${JSON.stringify(error.keyValue)}`,
-        );
-      }
-
-      console.log(error);
-      throw new InternalServerErrorException(
-        'Error at the moment to create the Pokemon, for more information, see on the logs',
-      );
+      this.handleExeceptions(error);
     }
   }
 
@@ -44,7 +50,6 @@ export class PokemonService {
 
   async findOne(term: string) {
     let pokemon: Pokemon;
-
     //Busqueda por numero de pokemon
 
     //Primera condición, se pregunta si !IsNaN al +term (el + indica que se intenta parsear lo que se pasa, a un numero), entonces se niega el IsNaN ("no es un numero"), por lopque se estaria preguntando si es un numero lo que se pasa, de ser así entonces se busca en la base de datos en la propiedad "no", si algun dato coincide.
@@ -84,19 +89,13 @@ export class PokemonService {
       //Actualiación
       await pokemon.updateOne(updatePokemonDto, { new: true });
 
-      return pokemon;
-    } catch (error) {
-      if (error.code === 11000) {
-        throw new BadRequestException(
-          `The Pokemon already exist in the Database: ${JSON.stringify(error.keyValue)}`,
-        );
-      }
+      //mi maleficio
+      //return pokemon;
 
-      console.log(error);
-      
-      throw new InternalServerErrorException(
-        'Error at the moment to create the Pokemon, for more information, see on the logs',
-      );
+      //mi condena
+      return { ...pokemon.toJSON(), ...updatePokemonDto };
+    } catch (error) {
+      this.handleExeceptions(error);
     }
   }
 
