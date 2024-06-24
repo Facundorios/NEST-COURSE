@@ -8,8 +8,8 @@ import {
 import { Model, isValidObjectId } from 'mongoose';
 import { InjectModel } from '@nestjs/mongoose';
 
-import { CreatePokemonDto } from './dto/create-pokemon.dto';
-import { UpdatePokemonDto } from './dto/update-pokemon.dto';
+import { CreatePokemonDto, UpdatePokemonDto } from './dto';
+
 import { Pokemon } from './entities/pokemon.entity';
 @Injectable()
 export class PokemonService {
@@ -111,8 +111,8 @@ export class PokemonService {
     const { deletedCount } = await this.pokemonModel.deleteOne({ _id: id });
 
     if (deletedCount == 0) {
-      throw new BadRequestException(`Pokemon with id "${id}" not found`)
+      throw new BadRequestException(`Pokemon with id "${id}" not found`);
     }
-    return 
+    return;
   }
 }
