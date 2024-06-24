@@ -7,11 +7,12 @@ import { MongooseModule } from '@nestjs/mongoose';
 import { PokemonModule } from './pokemon/pokemon.module';
 import { CommonModule } from './common/common.module';
 import { SeedModule } from './seed/seed.module';
+SeedModule
 
 @Module({
-  imports: [
+  imports: [  
     ServeStaticModule.forRoot({
-      rootPath: join(__dirname, '..', 'public'),
+      rootPath: join(__dirname, '..', 'public')
     }),
     MongooseModule.forRoot('mongodb://localhost:27017/nest-pokemon'),
     PokemonModule,
