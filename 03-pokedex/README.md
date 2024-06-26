@@ -23,6 +23,12 @@ npm i -g @nestjs/cli
 docker-compose up -d
 ```
 
+5. Cargar la seed. Una "seed" (semilla) se refiere a datos iniciales que se cargan en la base de datos al momento de su inicialización. Realice una petición "get" a la siguiente url.
+
+```
+http://localhost:3000/api/v2/seed
+```
+
 # Stack utilizado
 * NestJS
 * MongoDB
