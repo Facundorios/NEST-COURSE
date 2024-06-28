@@ -8,6 +8,7 @@ import { PokemonModule } from './pokemon/pokemon.module';
 import { CommonModule } from './common/common.module';
 import { SeedModule } from './seed/seed.module';
 import { DefaultEnvironmentsValues } from './config/app.config';
+import { JoiValidationSchema } from './config/joi.validation';
 
 @Module({
   imports: [
@@ -15,6 +16,7 @@ import { DefaultEnvironmentsValues } from './config/app.config';
     ConfigModule.forRoot({
       //La propiedad load es la propiedad de la clase ConfigModule que permite cargar las variables de entorno de un archivo .env, en donde se utiliza el metodo forRoot, que recibe un objeto de configuracion, en donde se utiliza la propiedad load, que recibe un arreglo de funciones, en donde se carga la funcion DefaultEnvironmentsValues.
       load: [DefaultEnvironmentsValues],
+      validationSchema: JoiValidationSchema
     }),
 
     ServeStaticModule.forRoot({
