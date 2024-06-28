@@ -4,7 +4,7 @@ import { ValidationPipe } from '@nestjs/common';
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
 
-  app.setGlobalPrefix('api/v2')
+  app.setGlobalPrefix('api/v2');
 
   app.useGlobalPipes(
     new ValidationPipe({
@@ -16,13 +16,14 @@ async function bootstrap() {
       //Transform es la propiedad de la clase ValidationPipe que permite que los datos que se envian en la peticion, se transformen a los tipos de datos que se definen en el DTO.
       transform: true,
       //TransformOptions es la propiedad de la clase ValidationPipe que permite que se habiliten las conversiones implicitas de los datos que se envian en la peticion.
-      transformOptions: {
+      transformOptions: { 
         //enableImplicitConversion es la propiedad de la clase TransformOptions que permite que se habiliten las conversiones implicitas de los datos que se envian en la peticion.
-        enableImplicitConversion: true
-      }
-    }) 
-  )
+        enableImplicitConversion: true,
+      },
+    }),
+  );
 
-  await app.listen(3000);
+  await app.listen(process.env.PORT);
+  console.log(`App running on: http://localhost:${process.env.PORT}`);
 }
 bootstrap();
