@@ -9,7 +9,6 @@
 
 ```
 npm install
-
 ```
 
 3. tener NEST CLI en el ordenador, en caso de no tenerlo, ejecutar:
@@ -23,7 +22,18 @@ npm i -g @nestjs/cli
 docker-compose up -d
 ```
 
-5. Cargar la seed. Una "seed" (semilla) se refiere a datos iniciales que se cargan en la base de datos al momento de su inicialización. Realice una petición "get" a la siguiente url.
+5. Clonar el archivo ```.env.template``` y renombrarlo a ```.env```
+
+
+6. Cargar las variables de valor de las variables de entornos en el ```.env```
+
+
+7. Inicializar la aplicación en modo desarrollo.
+```
+npm run start:dev
+```
+
+8. Cargar la seed. Una "seed" (semilla) se refiere a datos iniciales que se cargan en la base de datos al momento de su inicialización. Realice una petición "get" a la siguiente url.
 
 ```
 http://localhost:3000/api/v2/seed
@@ -31,4 +41,4 @@ http://localhost:3000/api/v2/seed
 
 # Stack utilizado
 * NestJS
-* MongoDB
+* MongoDB 
