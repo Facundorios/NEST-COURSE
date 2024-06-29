@@ -6,9 +6,9 @@ async function bootstrap() {
 
   app.setGlobalPrefix('api/v2');
 
-  app.useGlobalPipes(
+  app.useGlobalPipes( 
     new ValidationPipe({
-      //White list es la propiedad de la clase ValidationPipe que permite que solo los campos que esten definidos en el DTO sean aceptados.
+      //White list es la propiedad de la clase ValidationPipe que permite qu e solo los campos que esten definidos en el DTO sean aceptados.
       whitelist: true,
       //ForbidNonWhitelisted es la propiedad de la clase ValidationPipe que permite que si se envia un campo que no esta definido en el DTO, se rechace la peticion.
       //Si whitelist es true, entonces forbidNonWhitelisted es true, y viceversa.
@@ -18,8 +18,8 @@ async function bootstrap() {
       //TransformOptions es la propiedad de la clase ValidationPipe que permite que se habiliten las conversiones implicitas de los datos que se envian en la peticion.
       transformOptions: { 
         //enableImplicitConversion es la propiedad de la clase TransformOptions que permite que se habiliten las conversiones implicitas de los datos que se envian en la peticion.
-        enableImplicitConversion: true,
-      },
+        enableImplicitConversion: true, 
+      }, 
     }),
   );
 
