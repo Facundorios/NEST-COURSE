@@ -4,20 +4,28 @@
 
 # Ejecutar en desarrollo
 
-1. Clonar el repositorio:
+1. Clonar el repositorio.
+
 2. El la temrinal ejecutar:
 
 ```
 npm install
 ```
 
-3. tener NEST CLI en el ordenador, en caso de no tenerlo, ejecutar:
+3. Tener NEST CLI en el ordenador, en caso de no tenerlo, ejecutar:
 
 ```
 npm i -g @nestjs/cli
 ```
 
-4. Levantar la base de dato mediante docker.
+5. Clonar el archivo ```.env.template``` y renombrarlo a ```.env```
+
+6. Levantar la base de dato mediante docker.
 ```
 docker-compose up -d
+```
+
+7. Levantar el proyecto en modo de desarrollo:
+```
+npm run start:dev
 ```
