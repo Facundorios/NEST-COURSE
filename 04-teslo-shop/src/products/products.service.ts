@@ -3,6 +3,7 @@ import {
   Injectable,
   InternalServerErrorException,
   Logger,
+  NotFoundException,
 } from '@nestjs/common';
 import { CreateProductDto } from './dto/create-product.dto';
 import { UpdateProductDto } from './dto/update-product.dto';
@@ -12,7 +13,6 @@ import { Product } from './entities/product.entity';
 
 @Injectable()
 export class ProductsService {
-
   private readonly logger = new Logger('ProductsService');
 
   constructor(
@@ -31,25 +31,55 @@ export class ProductsService {
 
       return newProduct;
     } catch (error) {
-      this.logger.error(error.message)
+      this.logger.error(error.message);
       this.handleDatabaseExceptions(error);
     }
   }
 
-  findAll() {
-    return `This action returns all products`;
+  async findAll() {
+    try {
+      //Definimos allProducts, en donde se almacenan todos los productos de la base de datos, ordenados por el campo title de forma ascendente
+      const allProducts = await this.productRepository.find({
+        order: { title: 'ASC' },
+      });
+
+      return allProducts;
+    } catch (error) {
+      console.log(error);
+    }
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} product`;
+  async findOne(id: string) {
+    //Definimos OneProduct, en donde se almacena el producto que tenga el id que viene en la petición, si no existe, se lanza un error
+
+    const OneProduct = await this.productRepository.findOneBy({ id: id });
+
+    if (!OneProduct) {
+      throw new NotFoundException(`Product with id ${id} not found`);
+    }
+    return OneProduct;
   }
 
   update(id: number, updateProductDto: UpdateProductDto) {
     return `This action updates a #${id} product`;
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} product`;
+  async remove(id: string) {
+    //Forma #1
+    // try {
+    //   const deleteOneProduct = await this.productRepository.delete(id);
+    //   return deleteOneProduct;
+    // } catch (error) {
+    //   console.log(error);
+    // }
+
+    //Forma #2
+    try {
+      const deleteOneProduct = await this.findOne(id);
+      await this.productRepository.remove(deleteOneProduct);
+    } catch (error) {
+      console.log(error);
+    }
   }
 
   private handleDatabaseExceptions(error: any) {
