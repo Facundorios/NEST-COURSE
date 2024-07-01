@@ -7,6 +7,7 @@ import {
   IsString,
   MinLength,
 } from 'class-validator';
+import { BeforeInsert } from 'typeorm';
 
 export class CreateProductDto {
   @IsString()
@@ -39,4 +40,18 @@ export class CreateProductDto {
   @IsIn(['men', 'women', 'other'])
   @IsString()
   gender: string;
+
+  //BeforeInsert: Se ejecuta antes de insertar un registro en la base de datos.
+  //BeforeUpdate: Se ejecuta antes de actualizar un registro en la base de datos.
+
+  @BeforeInsert()
+  checkSlugInsert() {
+    if (!this.slug) {
+      this.slug = this.title;
+    }
+    this.slug = this.slug
+      .toLowerCase()
+      .replaceAll(' ', '_')
+      .replaceAll("'", '');
+  }
 }
