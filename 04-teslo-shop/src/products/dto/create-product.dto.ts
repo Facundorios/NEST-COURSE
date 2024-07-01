@@ -19,7 +19,7 @@ export class CreateProductDto {
   price: number;
 
   @IsString()
-  @MinLength(15)
+  @MinLength(5)
   description?: string;
 
   @IsString()
