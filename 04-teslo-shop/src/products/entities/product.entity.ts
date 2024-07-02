@@ -1,4 +1,10 @@
-import { BeforeInsert, Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
+import {
+  BeforeInsert,
+  BeforeUpdate,
+  Column,
+  Entity,
+  PrimaryGeneratedColumn,
+} from 'typeorm';
 
 @Entity()
 export class Product {
@@ -18,6 +24,7 @@ export class Product {
   @Column({
     type: 'text',
     nullable: true,
+    default: "Aun no hay descripción de este producto."
   })
   description: string;
 
@@ -47,11 +54,23 @@ export class Product {
 
   @BeforeInsert()
   generateSlug() {
-    this.slug = this.title
+    //Si no hay un slug, entonces el slug será igual al título
+    if (!this.slug) {
+      this.slug = this.title;
+    }
+
+    this.slug = this.slug
       .toLowerCase()
-      .replace(/ /g, '_')
-      .replaceAll(' - ', '_');
+      .replaceAll(' ', '_')
+      .replaceAll("'", ' ');
+  }
+
+  //BeforeUpdate: Se ejecuta antes de que se actualice un registro
+  @BeforeUpdate()
+  transformSlug() {
+    this.slug = this.slug
+      .toLowerCase()
+      .replaceAll(' ', '_')
+      .replaceAll("'", ' ');
   }
 }
-
-
