@@ -88,8 +88,24 @@ export class ProductsService {
     return oneProduct;
   }
 
-  update(id: number, updateProductDto: UpdateProductDto) {
-    return `This action updates a #${id} product`;
+  async update(id: string, updateProductDto: UpdateProductDto) {
+    //Se define el updateProducto y dentro del mismo se utiliza el productRepository con el metodo preload, el cual se encarga de cargar un producto de la base de datos, con los datos que vienen en el DTO, en este caso, se carga el producto con el id que viene en la petición, y se le asignan los valores que vienen en el DTO
+    const updateProduct = await this.productRepository.preload({
+      id: id,
+      ...updateProductDto,
+    });
+
+    if (!updateProduct) {
+      throw new NotFoundException(`Product with id ${id} not found`);
+    }
+
+    try {
+      await this.productRepository.save(updateProduct);
+      return updateProduct;
+    } catch (error) {
+      this.handleDatabaseExceptions(error)
+    }
+
   }
 
   async remove(id: string) {
