@@ -24,7 +24,7 @@ export class Product {
   @Column({
     type: 'text',
     nullable: true,
-    default: "Aun no hay descripción de este producto."
+    default: 'Aun no hay descripción de este producto.',
   })
   description: string;
 
@@ -51,6 +51,13 @@ export class Product {
     type: 'text',
   })
   gender: string;
+
+  @Column({
+    type: 'text',
+    array: true,
+    default: [],
+  })
+  tags: string[];
 
   @BeforeInsert()
   generateSlug() {

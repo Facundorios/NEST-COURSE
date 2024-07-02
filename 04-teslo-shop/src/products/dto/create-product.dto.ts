@@ -1,4 +1,5 @@
 import {
+  IsArray,
   IsIn,
   IsInt,
   IsNumber,
@@ -35,11 +36,18 @@ export class CreateProductDto {
 
   //Con la propiedad de IsString() "each", puedo hacer que cada uno de los elementos del array sean de tipo string
   @IsString({ each: true })
+  @IsArray()
   sizes: string[];
 
   @IsIn(['men', 'women', 'other'])
   @IsString()
   gender: string;
+
+  @IsString({ each: true})
+  @IsArray()
+  @IsOptional()
+  tags: string[]
+
 
   //BeforeInsert: Se ejecuta antes de insertar un registro en la base de datos.
   //BeforeUpdate: Se ejecuta antes de actualizar un registro en la base de datos.
