@@ -59,20 +59,30 @@ export class ProductsService {
     }
   }
 
-  async findOne(idOrSlug: string) {
-    
+  async findOne(property: string) {
     //Definimos una variable oneProduct, que es una varuiable de tipo Product
     let oneProduct: Product;
-    //Si el idOrSlug es un UUID, entonces buscamos el producto por id, de lo contrario, lo buscamos por slug
-    if (isUUID(idOrSlug)) {
-      oneProduct = await this.productRepository.findOneBy({ id: idOrSlug });
+    //Si el property es un UUID, entonces buscamos el producto por id, de lo contrario, lo buscamos por slug
+    if (isUUID(property)) {
+      oneProduct = await this.productRepository.findOneBy({ id: property });
     } else {
-      oneProduct = await this.productRepository.findOneBy({ slug: idOrSlug });
+      //oneProduct = await this.productRepository.findOneBy({ slug: property });
+
+      //Definimos queryBuilder (constructor de query), que es una instancia de QueryBuilder, que es una clase que nos permite construir consultas SQL de forma programática, es decir, sin escribir SQL directamente.
+      const queryBuilder = this.productRepository.createQueryBuilder();
+
+      //En el oneProduct utilizamos el queryBuilder, en donde utilizamos el metodo where, al cual le pasamos una cadena de texto en donde el titulo es igual al titulo o el slug igual al slug, esto ya que posteriormente se definen esas 2 propiedades a modo de objeto, y su valor en ambos casos es el de property. Adicionalmente, se utiliza el metodo getOne, para obtener un solo registro.Destacar el hecho que usamos el metodo UPPER para convertir el titulo a mayúsculas, por lo que la búsqueda no será case sensitive
+      oneProduct = await queryBuilder
+        .where('UPPER(title) = :title or slug = :slug ', {
+          title: property.toUpperCase(),
+          slug: property.toLowerCase(),
+        })
+        .getOne();
     }
 
     if (!oneProduct) {
       throw new NotFoundException(
-        `Product with id or slug ${idOrSlug} not found`,
+        `Product with id or slug ${property} not found`,
       );
     }
     return oneProduct;
