@@ -12,6 +12,8 @@ import { Repository } from 'typeorm';
 import { Product } from './entities/product.entity';
 import { PaginationDTO } from 'src/common/dto/pagination.dto';
 
+import { validate as isUUID } from 'uuid';
+
 @Injectable()
 export class ProductsService {
   private readonly logger = new Logger('ProductsService');
@@ -37,12 +39,10 @@ export class ProductsService {
     }
   }
 
-  async findAll( paginationdto: PaginationDTO) {
+  async findAll(paginationdto: PaginationDTO) {
     try {
-
       //Desectructuramos del pagination dto las propiedades necesarias, en este caso,son el limit y el offset. Dentro de la misma desestructuración, le asignamos valores por defecto a limit y offset, en caso de que no vengan en la petición
-      const { limit = 10, offset = 0 } = paginationdto
-
+      const { limit = 10, offset = 0 } = paginationdto;
 
       //Definimos allProducts, en donde se almacenan todos los productos de la base de datos, ordenados por el campo title de forma ascendente
       const allProducts = await this.productRepository.find({
@@ -59,15 +59,23 @@ export class ProductsService {
     }
   }
 
-  async findOne(id: string) {
-    //Definimos OneProduct, en donde se almacena el producto que tenga el id que viene en la petición, si no existe, se lanza un error
-
-    const OneProduct = await this.productRepository.findOneBy({ id: id });
-
-    if (!OneProduct) {
-      throw new NotFoundException(`Product with id ${id} not found`);
+  async findOne(idOrSlug: string) {
+    
+    //Definimos una variable oneProduct, que es una varuiable de tipo Product
+    let oneProduct: Product;
+    //Si el idOrSlug es un UUID, entonces buscamos el producto por id, de lo contrario, lo buscamos por slug
+    if (isUUID(idOrSlug)) {
+      oneProduct = await this.productRepository.findOneBy({ id: idOrSlug });
+    } else {
+      oneProduct = await this.productRepository.findOneBy({ slug: idOrSlug });
     }
-    return OneProduct;
+
+    if (!oneProduct) {
+      throw new NotFoundException(
+        `Product with id or slug ${idOrSlug} not found`,
+      );
+    }
+    return oneProduct;
   }
 
   update(id: number, updateProductDto: UpdateProductDto) {
