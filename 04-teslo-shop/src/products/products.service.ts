@@ -10,6 +10,7 @@ import { UpdateProductDto } from './dto/update-product.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Product } from './entities/product.entity';
+import { PaginationDTO } from 'src/common/dto/pagination.dto';
 
 @Injectable()
 export class ProductsService {
@@ -36,11 +37,20 @@ export class ProductsService {
     }
   }
 
-  async findAll() {
+  async findAll( paginationdto: PaginationDTO) {
     try {
+
+      //Desectructuramos del pagination dto las propiedades necesarias, en este caso,son el limit y el offset. Dentro de la misma desestructuración, le asignamos valores por defecto a limit y offset, en caso de que no vengan en la petición
+      const { limit = 10, offset = 0 } = paginationdto
+
+
       //Definimos allProducts, en donde se almacenan todos los productos de la base de datos, ordenados por el campo title de forma ascendente
       const allProducts = await this.productRepository.find({
-        order: { title: 'ASC' },
+        //Usamos la propeidad take, para indicar cuantos registros queremos obtener
+        take: limit,
+        //Usamos la propiedad skip, para indicar cuantos registros queremos saltar
+        skip: offset,
+        //TODO: relaciones
       });
 
       return allProducts;
