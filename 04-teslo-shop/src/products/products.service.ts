@@ -29,9 +29,9 @@ export class ProductsService {
     @InjectRepository(ProductImage)
     private readonly productImageRepository: Repository<ProductImage>,
     //Creamos una propiedad privada llamada productImage que es de tipo Repository<ProductImage>, al Repository se le pasa como "tipo" la entidad que se va a manejar, en este caso ProductImage.
-    
+
     //Hacemos inyección de dependencias de la clase DataSource, que es una clase que nos permite interactuar con la base de datos.
-    private readonly dataSrc: DataSource
+    private readonly dataSrc: DataSource,
   ) {}
 
   async create(createProductDto: CreateProductDto) {
@@ -131,25 +131,56 @@ export class ProductsService {
     //Desestructuramos el dto, sacamos la propeidad images y el resto de propiedades por separado.
     const { images, ...restOfProperty } = updateProductDto;
 
-    //Se define el updateProducto y dentro del mismo se utiliza el productRepository con el metodo preload, el cual se encarga de cargar un producto de la base de datos, con los datos que vienen en el DTO, en este caso, se carga el producto con el id que viene en la petición, y se le asignan los valores que vienen en el DTO
-    const updateProduct = await this.productRepository.preload({
+    //Se define el product y dentro del mismo se utiliza el productRepository con el metodo preload, el cual se encarga de cargar un producto de la base de datos, con los datos que vienen en el DTO, en este caso, se carga el producto con el id que viene en la petición, y se le asignan los valores que vienen en el DTO
+    const product = await this.productRepository.preload({
       id: id,
       ...restOfProperty,
-    })
+    });
 
-    if (!updateProduct) { 
+    if (!product) {
       throw new NotFoundException(`Product with id ${id} not found`);
     }
-    
+
     //Se crea una instancia de QueryRunner, que es una clase que nos permite ejecutar consultas SQL sin escribir SQL directamente.
-    const queryRunner = this.dataSrc.createQueryRunner()
-
-
+    const queryRunner = this.dataSrc.createQueryRunner();
+    //Se conecta a la base de datos
+    await queryRunner.connect();
+    //Se inicia una transacción
+    await queryRunner.startTransaction();
 
     try {
-      await this.productRepository.save(updateProduct);
-      return updateProduct;
+      if (images) {
+        //Se utilzia el queryRunner con la propiedad manager, que tiene dentor el metodo delete, en donde borramos los ProductImage en donde el "id", sea el mismo que se le pasa al update(id)
+        await queryRunner.manager.delete(ProductImage, {
+          product: { id: id },
+        });
+
+        product.images = images.map((image) =>
+          this.productImageRepository.create({ url: image }),
+        );
+      } else {
+        // ...
+      }
+
+      
+      //Se guardan los datos, pero no se suben a la base de datos
+      await queryRunner.manager.save(product);
+
+      //Commit de la transición
+      await queryRunner.commitTransaction()
+      await queryRunner.release()
+
+
+
+      // await this.productRepository.save(product);
+      //Reutilizando la funciónc reada para retornar el producto con la imagenes, devolvemos el producto con las imagenes en caso de que no se haya enviado ninguna adicional.
+      return this.findOnePlane(id);
     } catch (error) {
+
+      //En caso de que haya algun problema al momento de borrar las imagenes, se revierte la eliminación.
+      await queryRunner.rollbackTransaction()
+      await queryRunner.release()
+
       this.handleDatabaseExceptions(error);
     }
   }
