@@ -2,14 +2,14 @@ import { Module } from '@nestjs/common';
 import { ProductsService } from './products.service';
 import { ProductsController } from './products.controller';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { Product } from './entities/product.entity';
-
+import { Product, ProductImage } from './entities';
 @Module({
   controllers: [ProductsController],
   providers: [ProductsService],
   imports: [
+    //Importo el modulo de TypeOrm con el metodo forFeature,el cual recibe un array de entidades, 
     TypeOrmModule.forFeature([
-      Product
+      Product, ProductImage
     ])
   ]
 })
