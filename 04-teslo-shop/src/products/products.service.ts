@@ -5,14 +5,15 @@ import {
   Logger,
   NotFoundException,
 } from '@nestjs/common';
-import { CreateProductDto } from './dto/create-product.dto';
-import { UpdateProductDto } from './dto/update-product.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { Product } from './entities/product.entity';
-import { PaginationDTO } from 'src/common/dto/pagination.dto';
 
 import { validate as isUUID } from 'uuid';
+
+import { CreateProductDto } from './dto/create-product.dto';
+import { UpdateProductDto } from './dto/update-product.dto';
+import { PaginationDTO } from 'src/common/dto/pagination.dto';
+import { Product, ProductImage } from './entities';
 
 @Injectable()
 export class ProductsService {
@@ -23,16 +24,29 @@ export class ProductsService {
     @InjectRepository(Product)
     private readonly productRepository: Repository<Product>,
     //Creamos una propiedad privada llamada productRepository que es de tipo Repository<Product>, al Repository se le pasa como "tipo" la entidad que se va a manejar, en este caso Product
+
+    //Inyectamos el repositorio de ProductImage:
+    @InjectRepository(ProductImage)
+    private readonly productImageRepository: Repository<ProductImage>,
+    //Creamos una propiedad privada llamada productImage que es de tipo Repository<ProductImage>, al Repository se le pasa como "tipo" la entidad que se va a manejar, en este caso ProductImage
   ) {}
 
   async create(createProductDto: CreateProductDto) {
     try {
+      //El elemento rest en la desestructuración debe ser el ultimo en llamarse
+      const { images = [], ...productDetails } = createProductDto;
       //Creamos una nueva instancia de Product con los datos que vienen en el DTO
-      const newProduct = this.productRepository.create(createProductDto);
+      const newProduct = this.productRepository.create({
+        ...productDetails,
+        //Mapeamos las imagenes que vienen en el Ddstancia de ProductImage con la url de la imagen
+        images: images.map((image) =>
+          this.productImageRepository.create({ url: image }),
+        ),
+      });
       //Guardamos el nuevo producto en la base de datos
       await this.productRepository.save(newProduct);
 
-      return newProduct;
+      return {...newProduct, images: images};
     } catch (error) {
       this.logger.error(error.message);
       this.handleDatabaseExceptions(error);
@@ -93,6 +107,7 @@ export class ProductsService {
     const updateProduct = await this.productRepository.preload({
       id: id,
       ...updateProductDto,
+      images: [],
     });
 
     if (!updateProduct) {
@@ -103,9 +118,8 @@ export class ProductsService {
       await this.productRepository.save(updateProduct);
       return updateProduct;
     } catch (error) {
-      this.handleDatabaseExceptions(error)
+      this.handleDatabaseExceptions(error);
     }
-
   }
 
   async remove(id: string) {

@@ -49,6 +49,10 @@ export class CreateProductDto {
   tags: string[]
 
 
+  @IsString({ each: true})
+  @IsArray()
+  @IsOptional()
+  images?: string[]
   //BeforeInsert: Se ejecuta antes de insertar un registro en la base de datos.
   //BeforeUpdate: Se ejecuta antes de actualizar un registro en la base de datos.
 
