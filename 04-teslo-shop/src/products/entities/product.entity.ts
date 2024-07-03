@@ -3,9 +3,10 @@ import {
   BeforeUpdate,
   Column,
   Entity,
+  OneToMany,
   PrimaryGeneratedColumn,
 } from 'typeorm';
-
+import { ProductImage } from './';
 @Entity()
 export class Product {
   @PrimaryGeneratedColumn('uuid')
@@ -58,6 +59,17 @@ export class Product {
     default: [],
   })
   tags: string[];
+
+  //Relacion: Un producto puede tener muchas imágenes:
+  @OneToMany(
+    //#1 Primer callback: se hace una función que retorna el tipo de entidad con la que se relaciona
+    () => ProductImage,
+    //#2 Segundo callback: se hace una función que retorna la relación inversa
+    (productImage) => productImage.product,
+    //#3 Tercer callback: se pasan las opciones de la relación, en este caso se pasa la opción cascade: true, lo que hace que si se elimina un producto, también se eliminen las imágenes asociadas a ese producto
+    { cascade: true },
+  )
+  images?: ProductImage[];
 
   @BeforeInsert()
   generateSlug() {
