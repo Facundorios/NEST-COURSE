@@ -162,24 +162,20 @@ export class ProductsService {
         // ...
       }
 
-      
       //Se guardan los datos, pero no se suben a la base de datos
       await queryRunner.manager.save(product);
 
       //Commit de la transición
-      await queryRunner.commitTransaction()
-      await queryRunner.release()
-
-
+      await queryRunner.commitTransaction();
+      await queryRunner.release();
 
       // await this.productRepository.save(product);
       //Reutilizando la funciónc reada para retornar el producto con la imagenes, devolvemos el producto con las imagenes en caso de que no se haya enviado ninguna adicional.
       return this.findOnePlane(id);
     } catch (error) {
-
       //En caso de que haya algun problema al momento de borrar las imagenes, se revierte la eliminación.
-      await queryRunner.rollbackTransaction()
-      await queryRunner.release()
+      await queryRunner.rollbackTransaction();
+      await queryRunner.release();
 
       this.handleDatabaseExceptions(error);
     }
@@ -200,6 +196,16 @@ export class ProductsService {
       await this.productRepository.remove(deleteOneProduct);
     } catch (error) {
       console.log(error);
+    }
+  }
+
+  async removeAllProducts() {
+    const query = this.productRepository.createQueryBuilder('product');
+
+    try {
+      await query.delete().where({}).execute();
+    } catch (error) {
+      this.handleDatabaseExceptions(error);
     }
   }
 
