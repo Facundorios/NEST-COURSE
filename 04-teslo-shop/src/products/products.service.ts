@@ -46,7 +46,7 @@ export class ProductsService {
       //Guardamos el nuevo producto en la base de datos
       await this.productRepository.save(newProduct);
 
-      return {...newProduct, images: images};
+      return { ...newProduct, images: images };
     } catch (error) {
       this.logger.error(error.message);
       this.handleDatabaseExceptions(error);
@@ -65,9 +65,18 @@ export class ProductsService {
         //Usamos la propiedad skip, para indicar cuantos registros queremos saltar
         skip: offset,
         //TODO: relaciones
+        relations: {
+          //Relacion: Un producto puede tener muchas imágenes:
+          images: true,
+        },
       });
 
-      return allProducts;
+      return allProducts.map(({ images, ...rest }) => ({
+        //Mapeamos los productos, y retornamos un objeto con las propiedades del producto, y adicionalmente, le asignamos a la propiedad images, las imagenes del producto
+        ...rest,
+        //Mapeamos las imagenes del producto, y retornamos un arreglo con unicamente las url de las imagenes
+        images: images.map((images) => images.url),
+      }));
     } catch (error) {
       console.log(error);
     }
@@ -83,7 +92,7 @@ export class ProductsService {
       //oneProduct = await this.productRepository.findOneBy({ slug: property });
 
       //Definimos queryBuilder (constructor de query), que es una instancia de QueryBuilder, que es una clase que nos permite construir consultas SQL de forma programática, es decir, sin escribir SQL directamente.
-      const queryBuilder = this.productRepository.createQueryBuilder();
+      const queryBuilder = this.productRepository.createQueryBuilder('product');
 
       //En el oneProduct utilizamos el queryBuilder, en donde utilizamos el metodo where, al cual le pasamos una cadena de texto en donde el titulo es igual al titulo o el slug igual al slug, esto ya que posteriormente se definen esas 2 propiedades a modo de objeto, y su valor en ambos casos es el de property. Adicionalmente, se utiliza el metodo getOne, para obtener un solo registro.Destacar el hecho que usamos el metodo UPPER para convertir el titulo a mayúsculas, por lo que la búsqueda no será case sensitive
       oneProduct = await queryBuilder
@@ -91,6 +100,8 @@ export class ProductsService {
           title: property.toUpperCase(),
           slug: property.toLowerCase(),
         })
+        //Se utiliza el metodo leftJoinAndSelect, para hacer un join con la tabla images, y se utiliza el metodo getOne, para obtener un solo registro.
+        .leftJoinAndSelect('product.images', 'images')
         .getOne();
     }
 
@@ -100,6 +111,17 @@ export class ProductsService {
       );
     }
     return oneProduct;
+  }
+
+  async findOnePlane(property: string) {
+    //Creamos una variable property, que es de tipo string, y le asignamos el valor de la propiedad que viene en la petición, dentor de la misma, desestructuramos la propiedad de imagen, que en su valor por defecto es un arreglo vacío, y el resto de propiedades por separado utilizando el operador rest.
+    //Urtilizamos el metodo findeOne para traer el resto de funciones.
+    const { images = [], ...restOfProperty } = await this.findOne(property);
+    //retornamos un objeto con las propiedades del producto, y adicionalmente, le asignamos a la propiedad images, las imagenes del producto, que son mapeadas para que traigan unicamente la url
+    return {
+      ...restOfProperty,
+      images: images.map((images) => images.url),
+    };
   }
 
   async update(id: string, updateProductDto: UpdateProductDto) {

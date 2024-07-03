@@ -32,7 +32,7 @@ export class ProductsController {
   @Get(':property')
   //Para el caso de buscar un producto por id, no utilizaremos el ParseUUIDPipe, ya que se podrá buscar el producto mediante el uuid, o tambien mediante el slug. Por lo que el get tendrá el lugar de un ':id' o un ':slug', tendrá un ':property'
   findOne(@Param('property') property: string) {
-    return this.productsService.findOne(property);
+    return this.productsService.findOnePlane(property);
   }
 
   @Patch(':id')

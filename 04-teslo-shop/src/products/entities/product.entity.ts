@@ -66,8 +66,8 @@ export class Product {
     () => ProductImage,
     //#2 Segundo callback: se hace una función que retorna la relación inversa
     (productImage) => productImage.product,
-    //#3 Tercer callback: se pasan las opciones de la relación, en este caso se pasa la opción cascade: true, lo que hace que si se elimina un producto, también se eliminen las imágenes asociadas a ese producto
-    { cascade: true },
+    //#3 Tercer callback: se pasan las opciones de la relación, en este caso se pasa la opción cascade: true, lo que hace que si se elimina un producto, también se eliminen las imágenes asociadas a ese producto, y tambien añadimos el eager: true, para que las imágenes se carguen de forma automática
+    { cascade: true, eager: true },
   )
   images?: ProductImage[];
 
