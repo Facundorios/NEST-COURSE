@@ -7,10 +7,10 @@ import { Product, ProductImage } from './entities';
   controllers: [ProductsController],
   providers: [ProductsService],
   imports: [
-    //Importo el modulo de TypeOrm con el metodo forFeature,el cual recibe un array de entidades, 
-    TypeOrmModule.forFeature([
-      Product, ProductImage
-    ])
-  ]
+    //Importo el modulo de TypeOrm con el metodo forFeature,el cual recibe un array de entidades,
+    TypeOrmModule.forFeature([Product, ProductImage]),
+  ],
+  //#2: Y lo siguiente que tengo que hacer es dejar en el apartado de exports los modulos necesarios que quiero que pasar a otro modulo.
+  exports: [ProductsService],
 })
 export class ProductsModule {}
