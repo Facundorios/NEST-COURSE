@@ -30,3 +30,8 @@ docker-compose up
 ```
 npm run start:dev
 ```
+
+8. Cargar datos. 
+```
+http://localhost:3000/api/seed
+```
