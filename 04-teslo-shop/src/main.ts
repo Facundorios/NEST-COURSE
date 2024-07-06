@@ -3,8 +3,7 @@ import { AppModule } from './app.module';
 import { Logger, ValidationPipe } from '@nestjs/common';
 
 async function bootstrap() {
-  
-  const logger = new Logger('Servidor')
+  const logger = new Logger('Servidor');
 
   const app = await NestFactory.create(AppModule);
 
@@ -18,6 +17,6 @@ async function bootstrap() {
   );
 
   await app.listen(process.env.PORT);
-  logger.log(`Servidor escuchando en: http//:localhost:${process.env.PORT}`)
+  logger.log(`Servidor escuchando en: http//:localhost:${process.env.PORT}`);
 }
 bootstrap();
