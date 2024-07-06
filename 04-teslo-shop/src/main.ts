@@ -1,6 +1,6 @@
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
-import { Logger, ValidationPipe } from '@nestjs/common';
+import { ClassSerializerInterceptor, Logger, ValidationPipe } from '@nestjs/common';
 
 async function bootstrap() {
   const logger = new Logger('Servidor');
@@ -15,6 +15,11 @@ async function bootstrap() {
       forbidNonWhitelisted: true,
     }),
   );
+
+  //Utilizamos un global interceptor para serializar las respuestas de las peticiones. Le pasamos como argumento el app.get('Reflector'), esto quiere decir que estamos obteniendo el reflector de la aplicación.
+  app.useGlobalInterceptors(new ClassSerializerInterceptor(
+    app.get('Reflector')
+  ));
 
   await app.listen(process.env.PORT);
   logger.log(`Servidor escuchando en: http//:localhost:${process.env.PORT}`);

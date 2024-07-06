@@ -12,10 +12,11 @@ export class User {
     unique: true,
   })
   email: string;
-
+  
+  @Exclude()
   @Column({
     type: 'text',
-    select: false
+    select: false,
   })
   password: string;
 
