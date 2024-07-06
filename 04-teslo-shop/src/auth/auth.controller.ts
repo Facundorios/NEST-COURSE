@@ -6,6 +6,8 @@ import {
   Patch,
   Param,
   Delete,
+  UseInterceptors,
+  ClassSerializerInterceptor,
 } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { CreateUserDto } from './dto/create-user.dto';
@@ -14,6 +16,7 @@ import { CreateUserDto } from './dto/create-user.dto';
 export class AuthController {
   constructor(private readonly authService: AuthService) {}
 
+  @UseInterceptors(ClassSerializerInterceptor)
   @Post('signup')
   create(@Body() createUserdto: CreateUserDto) {
     return this.authService.create(createUserdto);
