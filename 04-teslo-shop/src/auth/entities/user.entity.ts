@@ -26,8 +26,9 @@ export class User {
     fullName:string
 
     @Column({
-        type: 'boolean',
-        default: false
+        //Diferencia entre el 'boolean', y el 'bool': el 'bool' es un tipo de dato de postgres, mientras que el 'boolean' es un tipo de dato de javascript
+        type: 'bool',
+        default: true
     })
     isActive: boolean
 
