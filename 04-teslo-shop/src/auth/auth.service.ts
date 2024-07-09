@@ -1,24 +1,26 @@
 import {
   BadRequestException,
   Injectable,
-  InternalServerErrorException,
-  NotFoundException,
   UnauthorizedException,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
+import { JwtService } from '@nestjs/jwt';
 import { Repository } from 'typeorm';
 
 import * as bcrypt from 'bcrypt';
 
 import { User } from './entities/user.entity';
 import { CreateUserDto, LoginUserDto } from './dto';
-import { NotFoundError } from 'rxjs';
+import { JwtPayload } from './interfaces/jwt-payload.interface';
 
 @Injectable()
 export class AuthService {
   constructor(
+    //Inyectamos el repositorio de usuarios.
     @InjectRepository(User)
-    private readonly userRepository: Repository<User>,
+    private readonly userRepository: Repository<User>, //Definimos el repositorio de usuarios.
+
+    private readonly jwtService: JwtService, //Definimos el servicio de JWT.
   ) {}
 
   //Creamos la funcion de registro de usuario que recibe como parametro el createUserDto.
@@ -36,7 +38,13 @@ export class AuthService {
       await this.userRepository.save(newUser);
 
       //Retornamos el nuevo usuario.
-      return newUser;
+      return {
+        ...newUser,
+        token: this.getJWToken({
+          email: newUser.email,
+        }),
+      };
+      //Autenticar: Generar el JWT que identifica al usuario
     } catch (error) {
       this.handleDatabaseError(error);
     }
@@ -60,11 +68,23 @@ export class AuthService {
       if (!bcrypt.compareSync(password, findUser.password))
         throw new UnauthorizedException(`Password incorrect`);
 
-      return findUser;
+      //Retornamos el usuario con el JWT, que identifica al usuario.
+      return {
+        ...findUser,
+        token: this.getJWToken({
+          email: findUser.email,
+        }),
+      };
     } catch (error) {
       //Si no se encuentra al usuario, lanzamos una excepcion.
       this.handleDatabaseError(error);
     }
+  }
+
+  private getJWToken(payload: JwtPayload) {
+    //Generamos el JWT con el payload.
+    const token = this.jwtService.sign(payload);
+    return token;
   }
 
   private handleDatabaseError(error: any): never {

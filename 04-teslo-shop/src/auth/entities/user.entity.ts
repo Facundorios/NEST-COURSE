@@ -1,5 +1,11 @@
 import { Exclude } from 'class-transformer';
-import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
+import {
+  BeforeInsert,
+  BeforeUpdate,
+  Column,
+  Entity,
+  PrimaryGeneratedColumn,
+} from 'typeorm';
 
 @Entity('users')
 export class User {
@@ -12,7 +18,7 @@ export class User {
     unique: true,
   })
   email: string;
-  
+
   @Exclude()
   @Column({
     type: 'text',
@@ -33,12 +39,22 @@ export class User {
   })
   isActive: boolean;
 
-    @Column({
-      type: 'text',
-      array: true,
-      default: ['user'],
-    })
-    roles: string[];
+  @Column({
+    type: 'text',
+    array: true,
+    default: ['user'],
+  })
+  roles: string[];
+
+  @BeforeInsert()
+  emailToLowerCase() {
+    this.email = this.email.toLowerCase().trim();
+  }
+
+  @BeforeUpdate()
+  emailToLowerCaseOnUpdate() {
+    this.emailToLowerCase();
+  }
 
   constructor(partial: Partial<User>) {
     Object.assign(this, partial);
