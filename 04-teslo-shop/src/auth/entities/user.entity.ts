@@ -33,12 +33,12 @@ export class User {
   })
   isActive: boolean;
 
-  @Column({
-    type: 'text',
-    array: true,
-    default: ['user'],
-  })
-  roles: string[];
+    @Column({
+      type: 'text',
+      array: true,
+      default: ['user'],
+    })
+    roles: string[];
 
   constructor(partial: Partial<User>) {
     Object.assign(this, partial);
