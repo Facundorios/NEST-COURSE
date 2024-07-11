@@ -25,8 +25,8 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
     });
   }
 
-  //Se crea el método validate que recibe un payload de tipo JwtPayload y retorna un usuario
-  async validateMethod(payload: JwtPayload): Promise<User> {
+  //Se crea el método validate que recibe un payload de tipo JwtPayload y retorna un usuario,el jwtStrategy buscará la funcion con el nombre validate, en caso de no encontrarla y al querer acceder a una ruta privada, lanzará el error de "this.validate is not a "
+  async validate(payload: JwtPayload): Promise<User> {
     //Se extrae el email del payload
     const { email } = payload;
 
