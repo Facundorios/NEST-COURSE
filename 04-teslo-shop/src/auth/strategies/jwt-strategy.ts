@@ -27,11 +27,11 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
 
   //Se crea el método validate que recibe un payload de tipo JwtPayload y retorna un usuario,el jwtStrategy buscará la funcion con el nombre validate, en caso de no encontrarla y al querer acceder a una ruta privada, lanzará el error de "this.validate is not a "
   async validate(payload: JwtPayload): Promise<User> {
-    //Se extrae el email del payload
-    const { email } = payload;
+    //Se extrae el id del payload
+    const { id } = payload;
 
-    //Se busca el usuario en la base de datos por el email
-    const user = this.userRepository.findOneBy({ email: email });
+    //Se busca el usuario en la base de datos por el id
+    const user = this.userRepository.findOneBy({ id: id });
     //Se valida si el usuario existe
     if (!user) {
       throw new UnauthorizedException(`Token no valid`);
@@ -40,6 +40,7 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
     if (!(await user).isActive) {
       throw new UnauthorizedException(`User is not active`);
     }
+    console.log(user)
 
     return user;
   }

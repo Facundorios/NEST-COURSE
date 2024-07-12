@@ -41,7 +41,7 @@ export class AuthService {
       return {
         ...newUser,
         token: this.getJWToken({
-          email: newUser.email,
+          id: newUser.id,
         }),
       };
       //Autenticar: Generar el JWT que identifica al usuario
@@ -58,9 +58,9 @@ export class AuthService {
       //Buscamos al usuario en la base de datos por su email, seleccionando el email y la contraseña.
       const findUser = await this.userRepository.findOne({
         //Buscamos al usuario por su email.
-        where: { email: email },
+        where: { email: email, },
         //Seleccionamos el email y la contraseña del usuario
-        select: { email: true, password: true },
+        select: { email: true, password: true, id: true },
       });
       //Si no se encuentra al usuario, lanzamos una excepcion.
       if (!findUser) throw new UnauthorizedException(`Email incorrect`);
@@ -68,11 +68,13 @@ export class AuthService {
       if (!bcrypt.compareSync(password, findUser.password))
         throw new UnauthorizedException(`Password incorrect`);
 
+      console.log({findUser})
+
       //Retornamos el usuario con el JWT, que identifica al usuario.
       return {
         ...findUser,
         token: this.getJWToken({
-          email: findUser.email,
+          id: findUser.id,
         }),
       };
     } catch (error) {
