@@ -11,7 +11,7 @@ import * as bcrypt from 'bcrypt';
 
 import { User } from './entities/user.entity';
 import { CreateUserDto, LoginUserDto } from './dto';
-import { JwtPayload } from './interfaces/jwt-payload.interface';
+import { JwtPayload, ValidRoles } from './interfaces';
 
 @Injectable()
 export class AuthService {
@@ -68,7 +68,7 @@ export class AuthService {
       if (!bcrypt.compareSync(password, findUser.password))
         throw new UnauthorizedException(`Password incorrect`);
 
-      console.log({findUser})
+      // console.log({findUser})
 
       //Retornamos el usuario con el JWT, que identifica al usuario.
       return {
