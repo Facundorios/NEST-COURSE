@@ -14,6 +14,7 @@ import { CreateProductDto } from './dto/create-product.dto';
 import { UpdateProductDto } from './dto/update-product.dto';
 import { PaginationDTO } from 'src/common/dto/pagination.dto';
 import { Product, ProductImage } from './entities';
+import { User } from 'src/auth/entities/user.entity';
 
 @Injectable()
 export class ProductsService {
@@ -34,7 +35,7 @@ export class ProductsService {
     private readonly dataSrc: DataSource,
   ) {}
 
-  async create(createProductDto: CreateProductDto) {
+  async create(createProductDto: CreateProductDto, user: User) {
     try {
       //El elemento rest en la desestructuración debe ser el ultimo en llamarse
       const { images = [], ...productDetails } = createProductDto;
@@ -45,6 +46,7 @@ export class ProductsService {
         images: images.map((image) =>
           this.productImageRepository.create({ url: image }),
         ),
+        user: user,
       });
       //Guardamos el nuevo producto en la base de datos
       await this.productRepository.save(newProduct);
@@ -127,7 +129,7 @@ export class ProductsService {
     };
   }
 
-  async update(id: string, updateProductDto: UpdateProductDto) {
+  async update(id: string, updateProductDto: UpdateProductDto, user: User) {
     //Desestructuramos el dto, sacamos la propeidad images y el resto de propiedades por separado.
     const { images, ...restOfProperty } = updateProductDto;
 
@@ -163,6 +165,7 @@ export class ProductsService {
       }
 
       //Se guardan los datos, pero no se suben a la base de datos
+      product.user = user;
       await queryRunner.manager.save(product);
 
       //Commit de la transición

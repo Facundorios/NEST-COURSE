@@ -13,9 +13,10 @@ export class SeedService {
 
     const insertPromises = [];
 
-    allProducts.forEach((product) => {
-      insertPromises.push(this.productsServices.create(product));
-    });
+    // allProducts.forEach((product) => {
+    //   insertPromises.push(this.productsServices.create(product));
+    // });
+    
 
     const resultados = await Promise.all(insertPromises);
     return "Semilla ejecutada";
