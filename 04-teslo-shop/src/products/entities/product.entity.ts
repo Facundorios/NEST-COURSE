@@ -3,10 +3,13 @@ import {
   BeforeUpdate,
   Column,
   Entity,
+  ManyToMany,
+  ManyToOne,
   OneToMany,
   PrimaryGeneratedColumn,
 } from 'typeorm';
 import { ProductImage } from './';
+import { User } from 'src/auth/entities/user.entity';
 @Entity({ name: 'products' })
 export class Product {
   @PrimaryGeneratedColumn('uuid')
@@ -70,6 +73,18 @@ export class Product {
     { cascade: true, eager: true },
   )
   images?: ProductImage[];
+
+  //Se crea una relacion de muchos a uno con la entidad User
+  @ManyToOne(
+    //Se hace una función que retorna el tipo de entidad con la que se relaciona
+    () => User,
+    //Se hace una función que retorna la entidad con la que se relaciona
+    (user) => user.product,
+    //Se pasan las opciones de la relación, en este caso se pasa la opción eager: true, para que los productos se carguen de forma automática
+    { eager: true },
+  )
+  //Se hace una función que retorna la entidad con la que se relaciona
+  user: User;
 
   @BeforeInsert()
   generateSlug() {

@@ -1,9 +1,11 @@
 import { Exclude } from 'class-transformer';
+import { Product } from 'src/products/entities';
 import {
   BeforeInsert,
   BeforeUpdate,
   Column,
   Entity,
+  OneToMany,
   PrimaryGeneratedColumn,
 } from 'typeorm';
 
@@ -45,6 +47,15 @@ export class User {
     default: ['user'],
   })
   roles: string[];
+
+  //Se crea una relacion de uno a muchos con la entidad Product
+  @OneToMany(
+    //Se hace una función que retorna el tipo de entidad con la que se relaciona
+    () => Product,
+    //Se hace una función que retorna la entidad con la que se relaciona
+    (product) => product.user,
+  )
+  product: Product;
 
   @BeforeInsert()
   emailToLowerCase() {
