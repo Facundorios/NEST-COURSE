@@ -18,6 +18,6 @@ export class SeedService {
     });
 
     const resultados = await Promise.all(insertPromises);
-    return resultados;
+    return "Semilla ejecutada";
   }
 }
