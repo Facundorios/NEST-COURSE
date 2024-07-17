@@ -1,10 +1,18 @@
-import { Controller, Post, Body, Get, UseGuards, Req, SetMetadata } from '@nestjs/common';
+import {
+  Controller,
+  Post,
+  Body,
+  Get,
+  UseGuards,
+  Req,
+  SetMetadata,
+} from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
 import { AuthService } from './auth.service';
 import { CreateUserDto, LoginUserDto } from './dto';
 import { User } from './entities/user.entity';
 
-import { GetUser, GetRawHeaders } from './decorators';
+import { GetUser, GetRawHeaders, Auth } from './decorators';
 import { UserRoleGuard } from './guards/user-role/user-role.guard';
 import { RoleProctected } from './decorators/role-proctected.decorator';
 import { ValidRoles } from './interfaces';
@@ -55,10 +63,19 @@ export class AuthController {
   //Utilizamos el decorador useGuards, el cual se utiliza para proteger las rutas de nuestra aplicación. Este decorador se puede utilizar en el controlador o en la ruta. Funciona de la siguiente manera: Si se utiliza en el controlador, todas las rutas del controlador estarán protegidas. Si se utiliza en la ruta, solo esa ruta estará protegida, independientemente de si el controlador tiene el decorador o no.
 
   //Se utiliza el decorador RoleProctected, el cual Lo que hace es que se le pasa un arreglo de roles validos que pueden acceder a la ruta.
-  @RoleProctected( ValidRoles.superUser, ValidRoles.admin, ValidRoles.user )
+  @RoleProctected(ValidRoles.superUser, ValidRoles.admin, ValidRoles.user)
   //Se utiliza el decorador UseGuards, el cual se utiliza para proteger las rutas de nuestra aplicación, se le pasa el AuthGuard() y el UserRoleGuard.
   @UseGuards(AuthGuard(), UserRoleGuard)
   privateRoutes2(@GetUser() user: User) {
+    return {
+      ok: true,
+      user,
+    };
+  }
+
+  @Get('private3')
+  @Auth(ValidRoles.admin)
+  privateRoutes3(@GetUser() user: User) {
     return {
       ok: true,
       user,
